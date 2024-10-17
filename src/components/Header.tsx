@@ -26,7 +26,7 @@ export default function Header({theme, setTheme}: HeaderProps) {
      id="nav-menu">
       <ul className="nav__list">
         <li className="nav__item">
-          <a href="#home" 
+          <a href="#" 
           className="nav__link active-link">
             Inicio
           </a>
@@ -47,7 +47,7 @@ export default function Header({theme, setTheme}: HeaderProps) {
           </a>
         </li>
         <li className="nav__item">
-          <a href="#contact" className="nav__link">
+          <a href="#footer" className="nav__link">
             Contáctanos
           </a>
         </li>

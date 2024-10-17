@@ -46,7 +46,14 @@ const Plant = () => {
               {plantaData.descripcion || 'Descripción de la planta.'}
               <br />
             </p>
-            <a href="#about" className="button button--flex">
+            <a 
+            style={{cursor:'pointer'}}
+            onClick={
+              () => {
+                document.getElementById('about')?.scrollIntoView()
+              }
+            }
+             className="button button--flex">
               Más información
               <i className="ri-arrow-right-down-line button__icon" />
             </a>
