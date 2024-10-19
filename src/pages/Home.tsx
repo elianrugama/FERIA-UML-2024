@@ -28,6 +28,7 @@ function Home() {
 
         '/src/assets/img/home2.jpg', // Corrige la extensión aquí
         '/src/assets/img/home3.jpg', // Corrige la extensión aquí
+        '/src/assets/img/home4.jpg', // Corrige la extensión aquí
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);

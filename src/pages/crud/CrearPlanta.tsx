@@ -299,6 +299,9 @@ const CreateItem: React.FC = () => {
                             >
                               Eliminar
                             </button>
+                          
+
+                            
                           </td>
                         </tr>
                       ))
