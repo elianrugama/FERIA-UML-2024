@@ -72,7 +72,7 @@ const PlantasList: React.FC<PlantasListProps> = ({ cantidad }) => {
             )}
             <h3 className="product__title">{planta.nombre}</h3>
             <span className="product__price">
-              {planta.caracteristicas.length > 0 ? planta.caracteristicas[0].valor : 'Sin características'}
+              {planta.caracteristicas.length > 0 ? planta.caracteristicas[0].nombre : 'Sin características'}
             </span>
             <Link to={`/plantas/${planta.id}`} className="button--flex product__button">
               <i className="ri-information-line" />

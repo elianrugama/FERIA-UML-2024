@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 
 const Footer = () => {
@@ -5,34 +6,30 @@ const Footer = () => {
         <>
             <footer className="footer section" id="footer">
                 <div className="footer__container container grid">
+
                     <div className="footer__content">
                         <a href="#" className="footer__logo">
-                            <i className="ri-leaf-line footer__logo-icon" /> ECOUML
+                            <i className="ri-leaf-line footer__logo-icon"></i> ECOUML
                         </a>
                         <h3 className="footer__title">
-                            Suscríbete a nuestro boletín <br /> para estar al día
+                            Apoya nuestro proyecto <br /> agregando contenido a nuestra plataforma
                         </h3>
-                        <div className="footer__subscribe">
-                            
-                            <input
-                                type="email"
-                                placeholder="Ingresa tu correo"
-                                className="footer__input"
-                            />
-                            <a className="button button--flex footer__button"
-                                href="/">
-                                Suscribirse
-                                <i className="ri-arrow-right-up-line button__icon" />
-                            </a>
-                        </div>
+                        
+                            <Link className="button button--flex footer__button" 
+                                to="/plantas/crear">
+                                Agregar contenido
+                                <i className="ri-arrow-right-up-line button__icon"></i>
+                            </Link>
                     </div>
+
+
                     <div className="footer__content">
                         <h3 className="footer__title">Nuestra dirección</h3>
                         <ul className="footer__data">
                             <li className="footer__information">Km 10.8 Carretera vieja a León, 200 mts al norte. </li>
                             <li className="footer__information">200 mts al norte.</li>
                             <li className="footer__information">Managua, Nicaragua</li>
-                            
+
                         </ul>
                     </div>
                     <div className="footer__content">
@@ -41,17 +38,17 @@ const Footer = () => {
                             <li className="footer__information">+505 2265 4938</li>
                             <div className="footer__social">
                                 <a href="https://www.facebook.com/"
-                                 className="footer__social-link">
+                                    className="footer__social-link">
                                     <i className="ri-facebook-fill" />
                                 </a>
                                 <a href="http://www.uml.edu.ni/"
-                                
-                                 className="footer__social-link">
+
+                                    className="footer__social-link">
                                     <i className="ri-global-line" />
                                 </a>
                                 <a href="mailto:mercadeo@uml.edu.ni"
-                                target="_blank"
-                                className="footer__social-link">
+                                    target="_blank"
+                                    className="footer__social-link">
                                     <i className="ri-mail-line" />
                                 </a>
                             </div>

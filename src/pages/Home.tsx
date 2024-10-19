@@ -1,4 +1,4 @@
-import{ useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PlantasList from '../components/PlantasList';
 
@@ -25,7 +25,7 @@ function Home() {
         // Puedes agregar más preguntas aquí
     ];
     const images = [
-        
+
         '/src/assets/img/home2.jpg', // Corrige la extensión aquí
         '/src/assets/img/home3.jpg', // Corrige la extensión aquí
     ];
@@ -50,15 +50,13 @@ function Home() {
                                 Bienvenidos a la <br />Universidad Martín Lutero
                             </h1>
                             <p className="home__description">
-                                En la Universidad Martín Lutero, estamos comprometidos con la educación integral y el cuidado del medio ambiente.
-
-
-                                <br />
+                                En la Universidad Martín Lutero, ofrecemos una educación integral basada en la innovación, el compromiso social y el desarrollo personal.
                             </p>
                             <a href="#about" className="button button--flex">
-                                Explorar <i className="ri-arrow-right-down-line button__icon" />
+                                Explorar <i className="ri-arrow-right-down-line button__icon"></i>
                             </a>
                         </div>
+
                         <div className="home__social">
                             <span className="home__social-follow">Síguenos</span>
                             <div className="home__social-links">
@@ -96,47 +94,46 @@ function Home() {
                                 src={images[currentIndex]}
                                 alt=""
                                 className="about__img"
-                                style={{borderRadius: '2%', width: '100%', height: 'auto' }}
+                                style={{ borderRadius: '2%', width: '100%', height: 'auto' }}
                             />
-                            
+
                         </div>
 
 
                         <div className="about__data">
                             <h2 className="section__title about__title">
-                                ¿Quiénes somos realmente? <br /> ¿Por qué elegirnos?
+                                ¿Quiénes somos? <br /> ¿Por qué elegirnos?
                             </h2>
                             <p className="about__description">
-                                En la Universidad Martín Lutero, nos dedicamos a la educación integral, con un fuerte enfoque en la sostenibilidad y el respeto por la naturaleza.
-                                Contamos con más de 500 especies de plantas que forman parte activa de nuestra enseñanza e investigación.
+                                En la Universidad Martín Lutero, ofrecemos una educación de calidad basada en principios de innovación, colaboración y compromiso con la sociedad.
                             </p>
                             <div className="about__details">
                                 <p className="about__details-description">
-                                    <i className="ri-checkbox-fill about__details-icon" />
-                                    Ofrecemos un entorno único donde la biodiversidad es clave.
+                                    <i className="ri-checkbox-fill about__details-icon"></i>
+                                    Contamos con un equipo docente altamente calificado.
                                 </p>
                                 <p className="about__details-description">
-                                    <i className="ri-checkbox-fill about__details-icon" />
-                                    Participamos en proyectos de conservación y sostenibilidad.
+                                    <i className="ri-checkbox-fill about__details-icon"></i>
+                                    Fomentamos el aprendizaje práctico y la investigación.
                                 </p>
                                 <p className="about__details-description">
-                                    <i className="ri-checkbox-fill about__details-icon" />
-                                    Investigamos plantas medicinales y especies en peligro.
+                                    <i className="ri-checkbox-fill about__details-icon"></i>
+                                    Desarrollamos programas académicos que responden a las necesidades actuales.
                                 </p>
                                 <p className="about__details-description">
-                                    <i className="ri-checkbox-fill about__details-icon" />
-                                    Colaboramos con la comunidad para proteger el medio ambiente.
+                                    <i className="ri-checkbox-fill about__details-icon"></i>
+                                    Promovemos el trabajo en equipo y el liderazgo entre nuestros estudiantes.
                                 </p>
                                 <p className="about__details-description">
-                                    <i className="ri-checkbox-fill about__details-icon" />
-                                    Nuestro objetivo es formar ciudadanos comprometidos con la naturaleza.
+                                    <i className="ri-checkbox-fill about__details-icon"></i>
+                                    Nos comprometemos con el cuidado del medio ambiente a través de iniciativas sostenibles.
                                 </p>
                             </div>
-                            <a href="#steps"
-                                className="button--link button--flex">
-                                Conoce Más <i className="ri-arrow-right-down-line button__icon" />
+                            <a href="#steps" className="button--link button--flex">
+                                Conoce Más <i className="ri-arrow-right-down-line button__icon"></i>
                             </a>
                         </div>
+
                     </div>
                 </section>
 
@@ -144,39 +141,39 @@ function Home() {
                 <section className="steps section container" id="steps">
                     <div className="steps__bg">
                         <h2 className="section__title-center steps__title">
-                            Pasos para comenzar <br /> con nuestras plantas
+                            Pasos para comenzar <br /> con nosotros
                         </h2>
                         <div className="steps__container grid">
                             <div className="steps__card">
                                 <div className="steps__card-number">01</div>
-                                <h3 className="steps__card-title">Explora nuestra biodiversidad</h3>
+                                <h3 className="steps__card-title">Descubre nuestras oportunidades</h3>
                                 <p className="steps__card-description">
-                                    Descubre las más de 500 especies de plantas que tenemos, desde plantas medicinales hasta especies en peligro de extinción.
+                                    Explora nuestros programas académicos, proyectos de investigación y oportunidades de crecimiento personal.
                                 </p>
                             </div>
                             <div className="steps__card">
                                 <div className="steps__card-number">02</div>
-                                <h3 className="steps__card-title">Participa en proyectos</h3>
+                                <h3 className="steps__card-title">Participa activamente</h3>
                                 <p className="steps__card-description">
-                                    Únete a nuestros proyectos de investigación y conservación, o toma cursos para aprender más sobre botánica y ecología.
+                                    Únete a nuestras iniciativas, ya sea a través de clubes, investigaciones, o proyectos colaborativos.
                                 </p>
                             </div>
                             <div className="steps__card">
                                 <div className="steps__card-number">03</div>
-                                <h3 className="steps__card-title">Cuida y protege</h3>
+                                <h3 className="steps__card-title">Contribuye al futuro</h3>
                                 <p className="steps__card-description">
-                                    Aplica lo aprendido para proteger las plantas y su ecosistema, contribuyendo a la conservación y sostenibilidad.
+                                    Aplica tus conocimientos y habilidades para crear un impacto positivo en la comunidad y más allá.
                                 </p>
                             </div>
                         </div>
                     </div>
                     <br />
                     <br />
-
                 </section>
 
+
                 {/*==================== PRODUCTOS ====================*/}
-                <section className="product section container" id="products">
+                <section className="product section container" id="plants">
 
                     <h2 className="section__title-center">
                         Descubre nuestras <br /> plantas

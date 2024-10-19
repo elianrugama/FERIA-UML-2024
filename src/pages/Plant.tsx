@@ -66,10 +66,10 @@ const Plant = () => {
         <h2 className="section__title">Características</h2>
         <div className="about__details">
           {plantaData.caracteristicas && plantaData.caracteristicas.length > 0 ? (
-            plantaData.caracteristicas.map((caracteristica: { nombre: string; valor: string }, index: number) => (
+            plantaData.caracteristicas.map((caracteristica: { nombre: string;}, index: number) => (
               <p className="about__details-description" key={index}>
                 <i className="ri-checkbox-fill about__details-icon" />
-                {caracteristica.nombre}: {caracteristica.valor}
+                {caracteristica.nombre}
               </p>
             ))
           ) : (

@@ -88,7 +88,7 @@ const Plants = () => {
                                     className="plantas__img"
                                 />
                                 <h3 className="plantas__title">{planta.nombre}</h3>
-                                <p className="plantas__genero">{planta.caracteristicas.length > 0 ? planta.caracteristicas[0].valor : 'Sin características'}</p>
+                                <p className="plantas__genero">{planta.caracteristicas.length > 0 ? planta.caracteristicas[0].nombre : 'Sin características'}</p>
                                 
                             </article>
                         </Link>

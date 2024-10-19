@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import MainLayout from './components/Layout';
+
 import Plant from './pages/Plant';
 import Plants from './pages/Plants';
 import CrearPlanta from './pages/crud/CrearPlanta';
-
+import Header from './components/Header';
+import Footer from './components/Footer';
+import './App.css';
 const App: React.FC = () => {
   const [theme, setTheme] = useState<string>(() => localStorage.getItem('theme') || '');
 
@@ -16,17 +18,21 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
+      <body className={theme}>
+      <Header theme={theme} setTheme={setTheme} />
       <Routes>
-        <Route path="/" element={<MainLayout theme={theme} setTheme={setTheme} />}>
-          <Route index element={<Home />} />
-          <Route path="/plantas" element={<Plants />} />
-          <Route path="/plantas/:id" element={<Plant />} />
-        </Route>
+        
+        <Route index element={<Home />} />
+        <Route path="/plantas" element={<Plants />} />
+        <Route path="/plantas/:id" element={<Plant />} />
+
         <Route path="/plantas/crear" element={<CrearPlanta />} />
-        <Route path="*" element={<MainLayout theme={theme} setTheme={setTheme} />}>
-          <Route path='*' element={<Home />} />
-        </Route>
+        <Route path='*' element={<Home />} />
+        
+
       </Routes>
+      <Footer />
+      </body>
     </HashRouter>
   );
 };
