@@ -9,6 +9,7 @@ import CrearPlanta from './pages/crud/CrearPlanta';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
+import EditarPlanta from './pages/crud/EditarPlanta';
 const App: React.FC = () => {
   const [theme, setTheme] = useState<string>(() => localStorage.getItem('theme') || '');
 
@@ -27,6 +28,8 @@ const App: React.FC = () => {
         <Route path="/plantas/:id" element={<Plant />} />
 
         <Route path="/plantas/crear" element={<CrearPlanta />} />
+        <Route path="/plantas/editar/:id" element={<EditarPlanta />} />
+
         <Route path='*' element={<Home />} />
         
 
