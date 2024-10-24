@@ -26,27 +26,26 @@ const Footer = () => {
                     <div className="footer__content">
                         <h3 className="footer__title">Nuestra dirección</h3>
                         <ul className="footer__data">
-                            <li className="footer__information">Km 10.8 Carretera vieja a León, 200 mts al norte. </li>
+                            <li className="footer__information">Universidad Martín Lutero Sede Ocotal Planta de ENACAL,</li>
                             <li className="footer__information">200 mts al norte.</li>
-                            <li className="footer__information">Managua, Nicaragua</li>
 
                         </ul>
                     </div>
                     <div className="footer__content">
                         <h3 className="footer__title">Contáctanos</h3>
                         <ul className="footer__data">
-                            <li className="footer__information">+505 2265 4938</li>
+                            <li className="footer__information">+505 83334096</li>
                             <div className="footer__social">
-                                <a href="https://www.facebook.com/"
+                                <a href="https://www.facebook.com/umlocotal"
                                     className="footer__social-link">
                                     <i className="ri-facebook-fill" />
                                 </a>
-                                <a href="http://www.uml.edu.ni/"
+                                <a href="https://ocotal.uml.edu.ni/"
 
                                     className="footer__social-link">
                                     <i className="ri-global-line" />
                                 </a>
-                                <a href="mailto:mercadeo@uml.edu.ni"
+                                <a href="mailto:info.ocotal0201@uml.edu.ni"
                                     target="_blank"
                                     className="footer__social-link">
                                     <i className="ri-mail-line" />
@@ -57,8 +56,8 @@ const Footer = () => {
                     <div className="footer__content">
                         <h3 className="footer__title">Horario de Atención</h3>
                         <ul className="footer__data">
-                            <li className="footer__information">Lunes a Viernes: 9am - 5pm</li>
-                            <li className="footer__information">Sábado: 8am - 4pm</li>
+                            <li className="footer__information">Lunes a Viernes: 8am - 5pm</li>
+                            <li className="footer__information">Sábado: 8am - 5pm</li>
                             <li className="footer__information">Domingo: Cerrado</li>
                         </ul>
                     </div>

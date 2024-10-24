@@ -1,12 +1,18 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db, storage } from '../../db/config';
-import { doc, getDoc, updateDoc,getDocs,collection,deleteDoc} from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Link } from 'react-router-dom';
 import { query, orderBy } from 'firebase/firestore';
 
 interface Caracteristica {
+  nombre: string;
+}
+interface Usos {
+  nombre: string;
+}
+interface Cuidados {
   nombre: string;
 }
 
@@ -15,6 +21,9 @@ interface Planta {
   nombre: string;
   descripcion: string;
   caracteristicas: Caracteristica[];
+  usos: Usos[];
+  cuidados: Cuidados[];
+  cantidad: number;
   imagenes: string[];
 }
 
@@ -34,6 +43,12 @@ const EditItem: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [items, setItems] = useState<Planta[]>([]);
+  //nuevas cosas usos y cantidad
+  const [cantidad, setCantidad] = useState<number>(0);
+  const [usos, setUsos] = useState<Usos[]>([]);
+  const [nuevoUso, setNuevoUso] = useState<Usos>({ nombre: '' });
+  const [cuidados, setCuidados] = useState<Cuidados[]>([]);
+  const [nuevoCuidado, setNuevoCuidado] = useState<Cuidados>({ nombre: '' });
 
   const obtenerItems = async () => {
     const q = query(collection(db, 'plantas'), orderBy('fecha', 'desc')); // Ordenar por fechaCreacion, descendente
@@ -97,7 +112,7 @@ const EditItem: React.FC = () => {
       setImagenesPreview((prev) => [...prev, ...archivosPreview]); // Mantener las previas
     }
   };
-  
+
 
   const eliminarImagenExistente = (url: string) => {
     if (!url.startsWith('blob:')) { // Solo elimina imágenes de Firebase
@@ -106,22 +121,34 @@ const EditItem: React.FC = () => {
       setImagenesPreview((prev) => prev.filter((imagen) => imagen !== url));
       console.log('Imágenes a eliminar:', imagenesAEliminar);
     }
-  
+
     // Eliminar también de la vista previa local
     setImagenesPreview((prev) => prev.filter((imagen) => imagen !== url));
-  
+
     // Filtrar las imágenes del estado
     const nuevasImagenes = imagenes.filter((imagen) => imagen.url !== url);
     setImagenes(nuevasImagenes);
-  
+
     console.log('Imágenes restantes:', imagenesPreview);
   };
-  
+
 
   const agregarCaracteristica = () => {
     if (nuevaCaracteristica.nombre.trim() !== '') {
       setCaracteristicas([...caracteristicas, nuevaCaracteristica]);
       setNuevaCaracteristica({ nombre: '' });
+    }
+  };
+  const agregarUso = () => {
+    if (nuevoUso.nombre.trim() !== '') {
+      setUsos([...usos, nuevoUso]);
+      setNuevoUso({ nombre: '' });
+    }
+  };
+  const agregarCuidado = () => {
+    if (nuevoCuidado.nombre.trim() !== '') {
+      setCuidados([...cuidados, nuevoCuidado]);
+      setNuevoCuidado({ nombre: '' });
     }
   };
 
@@ -134,8 +161,12 @@ const EditItem: React.FC = () => {
         const planta = docSnap.data() as Planta;
         setNombre(planta.nombre);
         setDescripcion(planta.descripcion);
-        setCaracteristicas(planta.caracteristicas);
+        setCaracteristicas(planta.caracteristicas || []); // Usar un arreglo vacío si no hay características
         setImagenesPreview(planta.imagenes);
+        setUsos(planta.usos || []); // Usar un arreglo vacío si no hay usos
+        setCuidados(planta.cuidados || []);
+        setCantidad(planta.cantidad);
+
         // Agregar las imágenes al estado con la URL y el archivo
         const imagenes = planta.imagenes.map((url) => ({ url, file: new File([], url), esNueva: false }));
         setImagenes(imagenes);
@@ -151,14 +182,14 @@ const EditItem: React.FC = () => {
 
   const subirImagenes = async () => {
     const urls: string[] = [];
-  
+
     for (const { file } of imagenes) { // Usar el nuevo estado que incluye el archivo y la URL
       const imagenRef = ref(storage, `imagenes/${file.name}`);
       const snapshot = await uploadBytes(imagenRef, file);
       const url = await getDownloadURL(snapshot.ref);
       urls.push(url);
     }
-  
+
     return urls;
   };
 
@@ -174,20 +205,20 @@ const EditItem: React.FC = () => {
     }
     console.log('Imágenes eliminadas:', imagenes);
     console.log('Imágenes a eliminar:', imagenesAEliminar);
-    
+
   };
 
   const actualizarDatos = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       // Primero eliminar las imágenes seleccionadas para eliminar
       await eliminarImagenesFirebase();
-  
+
       // Luego subir las nuevas imágenes si las hay
       let imagenesURLs = imagenesPreview.filter(url => !imagenesAEliminar.includes(url)); // Mantener solo las URLs que no están en la lista de eliminadas
-      
+
 
       if (imagenes.length > 0 && imagenes.some((imagen) => imagen.esNueva)) {
         const nuevasImagenesURLs = await subirImagenes();
@@ -205,15 +236,22 @@ const EditItem: React.FC = () => {
         caracteristicas,
         imagenes: imagenesURLs,
         fecha: new Date(),
+
+        //nuevas cosas
+        cantidad,
+        usos,
+        cuidados,
+
+
       });
-  
+
       setError(null);
       alert('Datos actualizados correctamente');
       navigate('/plantas/crear');
     } catch (err) {
       setError('Error al actualizar los datos. Inténtalo de nuevo.');
     }
-  
+
     setLoading(false);
   };
 
@@ -268,66 +306,168 @@ const EditItem: React.FC = () => {
                 </div>
 
                 {imagenes.length > 0 && (
-  <div className="mb-3">
-    <h5>Imágenes actuales:</h5>
-    <div className="d-flex flex-wrap">
-      {imagenes.map((imagen, index) => (
-        <div key={index} className="position-relative me-2">
-          <img
-            src={imagen.url}
-            alt={`Vista previa ${index}`}
-            className="img-thumbnail"
-            style={{ width: "75px", height: "75px" }}
-          />
-          <button
-            type="button"
-            className="btn btn-sm btn-danger position-absolute top-0 end-0"
-            onClick={() => eliminarImagenExistente(imagen.url)}
-          >
-            &times;
-          </button>
-          <span className="badge bg-secondary position-absolute top-0 start-0">
-            {imagen.esNueva ? "Nueva" : "Vieja"}
-          </span>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                  <div className="mb-3">
+                    <h5>Imágenes actuales:</h5>
+                    <div className="d-flex flex-wrap">
+                      {imagenes.map((imagen, index) => (
+                        <div key={index} className="position-relative me-2">
+                          <img
+                            src={imagen.url}
+                            alt={`Vista previa ${index}`}
+                            className="img-thumbnail"
+                            style={{ width: "75px", height: "75px" }}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                            onClick={() => eliminarImagenExistente(imagen.url)}
+                          >
+                            &times;
+                          </button>
+                          <span className="badge bg-secondary position-absolute top-0 start-0">
+                            {imagen.esNueva ? "Nueva" : "Vieja"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                <div className="mb-3">
-                  <label htmlFor="caracteristicas" className="form-label">Agregar Características:</label>
-                  <div className="d-flex">
-                    <input
-                      className="form-control me-2"
-                      type="text"
-                      placeholder="Ej. Resistente a la sequía, Nombre científico: ..."
-                      value={nuevaCaracteristica.nombre}
-                      onChange={(e) => setNuevaCaracteristica({ ...nuevaCaracteristica, nombre: e.target.value })}
-                    />
-                    <button type="button" className="btn btn-success" onClick={agregarCaracteristica}>Agregar</button>
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Características</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Resistente a la sequía, Nombre científico: ..."
+                        value={nuevaCaracteristica.nombre}
+                        onChange={(e) => setNuevaCaracteristica({ ...nuevaCaracteristica, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevaCaracteristica.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                       onClick={agregarCaracteristica}>
+                        <i className={nuevaCaracteristica.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {caracteristicas.length > 0 && (
+                      <ul className="list-group">
+                        {caracteristicas.map((caracteristica, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{caracteristica.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevasCaracteristicas = caracteristicas.filter((_, i) => i !== index);
+                                setCaracteristicas(nuevasCaracteristicas);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
 
-                {caracteristicas.length > 0 && (
-                  <ul className="list-group mb-3">
-                    {caracteristicas.map((caracteristica, index) => (
-                      <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                        {caracteristica.nombre}
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger"
-                          onClick={() => {
-                            const nuevasCaracteristicas = caracteristicas.filter((_, i) => i !== index);
-                            setCaracteristicas(nuevasCaracteristicas);
-                          }}
-                        >
-                          Eliminar
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Usos</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Medicinal, Ornamental, Comestible..."
+                        value={nuevoUso.nombre}
+                        onChange={(e) => setNuevoUso({ ...nuevoUso, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevoUso.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                       onClick={agregarUso}>
+                        <i className={nuevoUso.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {usos.length > 0 && (
+                      <ul className="list-group">
+                        {usos.map((uso, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{uso.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevosUsos = usos.filter((_, i) => i !== index);
+                                setUsos(nuevosUsos);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                {/* Cuidados */}
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Cuidados</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Riego, Luz, Suelo..."
+                        value={nuevoCuidado.nombre}
+                        onChange={(e) => setNuevoCuidado({ ...nuevoCuidado, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevoCuidado.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                        onClick={agregarCuidado}>
+                        <i className={nuevoCuidado.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {cuidados.length > 0 && (
+                      <ul className="list-group">
+                        {cuidados.map((cuidado, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{cuidado.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevosCuidados = cuidados.filter((_, i) => i !== index);
+                                setCuidados(nuevosCuidados);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="cantidad" className="form-label">Cantidad:</label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    id="cantidad"
+                    value={cantidad}
+                    placeholder="Cantidad de plantas"
+                    onChange={(e) => setCantidad(Number(e.target.value))}
+                    required
+                  />
+                </div>
 
                 <div className="d-grid">
                   <button className="btn btn-success" type="submit" disabled={loading}>
@@ -343,7 +483,7 @@ const EditItem: React.FC = () => {
         <div className="col-sm-12 col-md-6">
           <div className="card">
             <div className="card-body">
-            <h2 className="card-title text-center">Lista de Plantas <span role="img" aria-label="planta">{items.length > 0 ? items.length : '🌱'}</span></h2>
+              <h2 className="card-title text-center">Lista de Plantas <span role="img" aria-label="planta">{items.length > 0 ? items.length : '🌱'}</span></h2>
               <div className="table-responsive mt-4">
                 <table className="table table-striped table-bordered">
                   <thead>
@@ -351,6 +491,8 @@ const EditItem: React.FC = () => {
                       <th>Nombre</th>
                       <th>Descripción</th>
                       <th>Características</th>
+                      <th>Usos</th>
+                      <th>Cantidad</th>
                       <th>Imágenes</th>
                       <th>Acciones</th>
                     </tr>
@@ -367,11 +509,19 @@ const EditItem: React.FC = () => {
                           <td>{item.descripcion}</td>
                           <td>
                             <ul className="list-unstyled">
-                              {item.caracteristicas.map((caracteristica, index) => (
+                              {item.caracteristicas && item.caracteristicas.map((caracteristica, index) => (
                                 <li key={index}>{caracteristica.nombre}</li>
                               ))}
                             </ul>
                           </td>
+                          <td>
+                            <ul className="list-unstyled">
+                              {item.usos && item.usos.map((uso, index) => (
+                                <li key={index}>{uso.nombre}</li>
+                              ))}
+                            </ul>
+                          </td>
+                          <td>{item.cantidad || '0'}</td>
                           <td>
                             {item.imagenes.map((url, index) => (
                               <img
@@ -393,7 +543,7 @@ const EditItem: React.FC = () => {
                             <Link to={`/plantas/editar/${item.id}`} className="btn btn-warning btn-sm ms-2">
                               <i className="ri-pencil-line"></i>
                             </Link>
-                            
+
                           </td>
                         </tr>
                       ))

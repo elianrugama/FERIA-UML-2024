@@ -10,12 +10,21 @@ import { query, orderBy } from 'firebase/firestore';
 interface Caracteristica {
   nombre: string;
 }
+interface Usos {
+  nombre: string;
+}
+interface Cuidados {
+  nombre: string;
+}
 
 interface Planta {
   id: string;
   nombre: string;
   descripcion: string;
   caracteristicas: Caracteristica[];
+  usos: Usos[];
+  cuidados: Cuidados[];
+  cantidad: number;
   imagenes: string[];
 }
 
@@ -36,11 +45,24 @@ const CreateItem: React.FC = () => {
   const [descripcion, setDescripcion] = useState<string>('');
   const [imagenes, setImagenes] = useState<File[]>([]);
   const [imagenesPreview, setImagenesPreview] = useState<string[]>([]);
+
   const [caracteristicas, setCaracteristicas] = useState<Caracteristica[]>([]);
+
   const [nuevaCaracteristica, setNuevaCaracteristica] = useState<Caracteristica>({ nombre: '' });
   const [items, setItems] = useState<Planta[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  //nuevas cosas usos y cantidad
+  const [cantidad, setCantidad] = useState<number>(0);
+  const [usos, setUsos] = useState<Usos[]>([]);
+  const [nuevoUso, setNuevoUso] = useState<Usos>({ nombre: '' });
+  const [cuidados, setCuidados] = useState<Cuidados[]>([]);
+  const [nuevoCuidado, setNuevoCuidado] = useState<Cuidados>({ nombre: '' });
+
+
+
+
 
   useEffect(() => {
     obtenerItems();
@@ -63,6 +85,20 @@ const CreateItem: React.FC = () => {
       setNuevaCaracteristica({ nombre: '' });
     }
   };
+  //nuevas cosas usos y cantidad
+  const agregarUso = () => {
+    if (nuevoUso.nombre.trim() !== '') {
+      setUsos([...usos, nuevoUso]);
+      setNuevoUso({ nombre: '' });
+    }
+  };
+  const agregarCuidado = () => {
+    if (nuevoCuidado.nombre.trim() !== '') {
+      setCuidados([...cuidados, nuevoCuidado]);
+      setNuevoCuidado({ nombre: '' });
+    }
+  };
+
 
   const subirImagenes = async () => {
     const urls: string[] = [];
@@ -89,12 +125,20 @@ const CreateItem: React.FC = () => {
         caracteristicas,
         imagenes: imagenesURLs,
         fecha: new Date(),
+
+        //nuevas cosas
+        usos,
+        cuidados,
+        cantidad,
       });
       setNombre('');
       setDescripcion('');
       setImagenes([]);
       setImagenesPreview([]);
       setCaracteristicas([]);
+      setUsos([]);
+      setCuidados([]);
+      setCantidad(0);
       setError(null);
       obtenerItems();
     } catch (err) {
@@ -145,7 +189,7 @@ const CreateItem: React.FC = () => {
           <div className="card">
             <div className="card-body">
               <h1 className="card-title text-center mb-4 text-success">Crear Nueva Planta <span role="img" aria-label="planta">🌿</span></h1>
-  
+
               <form onSubmit={subirDatos}>
                 <div className="mb-3">
                   <label htmlFor="nombre" className="form-label">Nombre:</label>
@@ -159,7 +203,7 @@ const CreateItem: React.FC = () => {
                     required
                   />
                 </div>
-  
+
                 <div className="mb-3">
                   <label htmlFor="descripcion" className="form-label">Descripción:</label>
                   <textarea
@@ -171,7 +215,7 @@ const CreateItem: React.FC = () => {
                     required
                   />
                 </div>
-  
+
                 <div className="mb-3">
                   <label htmlFor="imagenes" className="form-label">Subir Imágenes:</label>
                   <input
@@ -184,7 +228,7 @@ const CreateItem: React.FC = () => {
                     required
                   />
                 </div>
-  
+
                 {imagenesPreview.length > 0 && (
                   <div className="mb-3">
                     <h5>Vista previa de imágenes:</h5>
@@ -201,57 +245,162 @@ const CreateItem: React.FC = () => {
                     </div>
                   </div>
                 )}
-  
-                <div className="mb-3">
-                  <label htmlFor="caracteristicas" className="form-label">Agregar Características:</label>
-                  <div className="d-flex">
-                    <input
-                      className="form-control me-2"
-                      type="text"
-                      placeholder="Ej. Resistente a la sequía, Nombre científico: ..."
-                      value={nuevaCaracteristica.nombre}
-                      onChange={(e) => setNuevaCaracteristica({ ...nuevaCaracteristica, nombre: e.target.value })}
-                    />
-                    <button type="button" className="btn btn-success" onClick={agregarCaracteristica}>Agregar</button>
+
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Características</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Resistente a la sequía, Nombre científico: ..."
+                        value={nuevaCaracteristica.nombre}
+                        onChange={(e) => setNuevaCaracteristica({ ...nuevaCaracteristica, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevaCaracteristica.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                        onClick={agregarCaracteristica}>
+                        <i className={nuevaCaracteristica.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {caracteristicas.length > 0 && (
+                      <ul className="list-group">
+                        {caracteristicas.map((caracteristica, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{caracteristica.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevasCaracteristicas = caracteristicas.filter((_, i) => i !== index);
+                                setCaracteristicas(nuevasCaracteristicas);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
-  
-                {caracteristicas.length > 0 && (
-                  <ul className="list-group mb-3">
-                    {caracteristicas.map((caracteristica, index) => (
-                      <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                        {caracteristica.nombre}
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger"
-                          onClick={() => {
-                            const nuevasCaracteristicas = caracteristicas.filter((_, i) => i !== index);
-                            setCaracteristicas(nuevasCaracteristicas);
-                          }}
-                        >
-                          Eliminar
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-  
+
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Usos</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Medicinal, Ornamental, Comestible..."
+                        value={nuevoUso.nombre}
+                        onChange={(e) => setNuevoUso({ ...nuevoUso, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevoUso.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                        onClick={agregarUso}>
+                        <i className={nuevoUso.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {usos.length > 0 && (
+                      <ul className="list-group">
+                        {usos.map((uso, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{uso.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevosUsos = usos.filter((_, i) => i !== index);
+                                setUsos(nuevosUsos);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                {/* Cuidados */}
+                <div className="card mb-4">
+                  <div className="card-body">
+                    <h5 className="card-title">Agregar Cuidados</h5>
+                    <div className="input-group mb-3">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ej. Riego, Luz, Suelo..."
+                        value={nuevoCuidado.nombre}
+                        onChange={(e) => setNuevoCuidado({ ...nuevoCuidado, nombre: e.target.value })}
+                      />
+                      <button type="button" className={
+                        nuevoCuidado.nombre.trim() === '' ? "btn btn-secondary" : "btn btn-success"
+                      }
+                        onClick={agregarCuidado}>
+                        <i className={nuevoCuidado.nombre.trim() === '' ? "ri-add-fill" : "ri-save-line"}></i>
+                      </button>
+                    </div>
+
+                    {cuidados.length > 0 && (
+                      <ul className="list-group">
+                        {cuidados.map((cuidado, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{cuidado.nombre}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                const nuevosCuidados = cuidados.filter((_, i) => i !== index);
+                                setCuidados(nuevosCuidados);
+                              }}
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <label htmlFor="cantidad" className="form-label">Cantidad:</label>
+                  <input
+                    className="form-control"
+                    type="number"
+                    id="cantidad"
+                    value={cantidad}
+                    placeholder="Cantidad de plantas"
+                    onChange={(e) => setCantidad(parseInt(e.target.value))}
+
+                  />
+                </div>
+
+
+
+
                 <div className="d-grid">
                   <button className="btn btn-success" type="submit" disabled={loading}>
                     {loading ? "Subiendo..." : "Agregar Planta"}
                   </button>
                   <button className="btn btn-primary mt-2"
-                   type="submit">
+                    type="submit">
                     Voler a la página principal
                   </button>
                 </div>
-  
+
                 {error && <p className="text-danger mt-3 text-center">{error}</p>}
               </form>
             </div>
           </div>
         </div>
-  
+
         {/* Tarjeta para la lista de plantas */}
         <div className="col-sm-12 col-md-6">
           <div className="card">
@@ -264,6 +413,8 @@ const CreateItem: React.FC = () => {
                       <th>Nombre</th>
                       <th>Descripción</th>
                       <th>Características</th>
+                      <th>Usos</th>
+                      <th>Cantidad</th>
                       <th>Imágenes</th>
                       <th>Acciones</th>
                     </tr>
@@ -281,11 +432,20 @@ const CreateItem: React.FC = () => {
                           <td>{item.descripcion}</td>
                           <td>
                             <ul className="list-unstyled">
-                              {item.caracteristicas.map((caracteristica, index) => (
+                              {item.caracteristicas && item.caracteristicas.map((caracteristica, index) => (
                                 <li key={index}>{caracteristica.nombre}</li>
                               ))}
                             </ul>
                           </td>
+                          <td>
+                            <ul className="list-unstyled">
+                              {item.usos && item.usos.map((uso, index) => (
+                                <li key={index}>{uso.nombre}</li>
+                              ))}
+                            </ul>
+                          </td>
+                          <td>{item.cantidad || '0'}</td>
+
                           <td>
                             {item.imagenes.map((url, index) => (
                               <img
@@ -307,7 +467,7 @@ const CreateItem: React.FC = () => {
                             <Link to={`/plantas/editar/${item.id}`} className="btn btn-warning btn-sm ms-2">
                               <i className="ri-pencil-line"></i>
                             </Link>
-                            
+
                           </td>
                         </tr>
                       ))
@@ -321,7 +481,7 @@ const CreateItem: React.FC = () => {
       </div>
     </div>
   );
-  
+
 };
 
 export default CreateItem;

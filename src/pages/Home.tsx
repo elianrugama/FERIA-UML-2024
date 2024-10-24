@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PlantasList from '../components/PlantasList';
+import { collection,getDocs } from 'firebase/firestore';
+import { db } from '../db/config';
 
 function Home() {
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // Controla qué pregunta está abierta
@@ -8,7 +10,32 @@ function Home() {
     const toggleAccordion = (index: number) => {
         setActiveIndex(activeIndex === index ? null : index); // Alterna entre abrir y cerrar
     };
-
+    const [plantCount, setPlantCount] = useState(0);
+    const [totalPlantas, setTotalPlantas] = useState(0);
+    //optener el total de plantas
+    const obtenerPlantas = async () => {
+        try {
+            const plantasCollection = collection(db, 'plantas'); // Reemplaza 'plantas' con el nombre de tu colección
+            const plantasSnapshot = await getDocs(plantasCollection);
+            const plantasList = plantasSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                cantidad: doc.data().cantidad || 0, // Ensure cantidad is included
+                ...doc.data(),
+            }));
+            setPlantCount(plantasList.length);
+            //sumar plantas.cantidad
+            let total = 0;
+            plantasList.forEach((planta) => {
+                total += planta.cantidad || 0;
+            });
+            setTotalPlantas(total);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        obtenerPlantas();
+    }, []);
     const questions = [
         {
             title: '¿Por qué mis flores se están cayendo o muriendo?',
@@ -28,7 +55,10 @@ function Home() {
 
         '/src/assets/img/home2.jpg', // Corrige la extensión aquí
         '/src/assets/img/home3.jpg', // Corrige la extensión aquí
-        '/src/assets/img/home4.jpg', // Corrige la extensión aquí
+        '/src/assets/img/home5.jpg', // Corrige la extensión aquí
+        '/src/assets/img/home7.jpg', // Corrige la extensión aquí
+        '/src/assets/img/home8.jpg', // Corrige la extensión aquí
+        '/src/assets/img/home9.jpg', // Corrige la extensión aquí
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,14 +75,19 @@ function Home() {
                 {/*==================== INICIO ====================*/}
                 <section className="home" id="home">
                     <div className="home__container container grid">
-                        <img src="/src/assets/img/home.png" alt="" className="home__img" />
+                        <img src="/src/assets/img/home5.png" alt="" className="home__img" />
                         <div className="home__data">
                             <h1 className="home__title">
-                                Bienvenidos a la <br />Universidad Martín Lutero
+                                Catalogo de Plantas UML Ocotal
                             </h1>
                             <p className="home__description">
                                 En la Universidad Martín Lutero, ofrecemos una educación integral basada en la innovación, el compromiso social y el desarrollo personal.
+                                {/* total de plantas con una buena descripción y una variable contador */}
                             </p>
+                            <p className="home__description">
+                            Actualmente, contamos con <strong>{plantCount}</strong> plantas en nuestro catálogo y un total de <strong>{totalPlantas}</strong> plantas en nuestras areas verdes.
+                            </p>
+
                             <a href="#about" className="button button--flex">
                                 Explorar <i className="ri-arrow-right-down-line button__icon"></i>
                             </a>
@@ -62,22 +97,22 @@ function Home() {
                             <span className="home__social-follow">Síguenos</span>
                             <div className="home__social-links">
                                 <a
-                                    href="https://www.facebook.com/UMLNicaragua"
+                                    href="https://www.facebook.com/umlocotal"
                                     target="_blank"
                                     className="home__social-link"
                                 >
                                     <i className="ri-facebook-fill" />
                                 </a>
                                 <a
-                                    href="http://www.uml.edu.ni/"
+                                    href="https://ocotal.uml.edu.ni/"
                                     target="_blank"
                                     className="home__social-link"
                                 >
                                     <i className="ri-global-line" />
                                 </a>
-                                {/* mercadeo@uml.edu.ni */}
+                                {/* info.ocotal0201@uml.edu.ni*/}
                                 <a
-                                    href="mailto:mercadeo@uml.edu.ni"
+                                    href="mailto:info.ocotal0201@uml.edu.ni"
                                     target="_blank"
                                     className="home__social-link"
                                 >

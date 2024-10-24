@@ -61,22 +61,73 @@ const Plant = () => {
         </div>
       </section>
 
-      {/*==================== CARACTERÍSTICAS ====================*/}
       <section className="about section container" id="about">
-        <h2 className="section__title">Características</h2>
-        <div className="about__details">
-          {plantaData.caracteristicas && plantaData.caracteristicas.length > 0 ? (
-            plantaData.caracteristicas.map((caracteristica: { nombre: string;}, index: number) => (
-              <p className="about__details-description" key={index}>
-                <i className="ri-checkbox-fill about__details-icon" />
-                {caracteristica.nombre}
-              </p>
-            ))
-          ) : (
-            <p className="about__details-description">No hay características disponibles.</p>
-          )}
-        </div>
-      </section>
+  <h2 className="section__title">
+   Información de la Planta
+  </h2>
+  <div className="about__details">
+    {/* Características */}
+    {plantaData.caracteristicas && plantaData.caracteristicas.length > 0 && (
+      <>
+        <h3>Características</h3>
+        {plantaData.caracteristicas.map((caracteristica: { nombre: string }, index: number) => (
+          <p className="about__details-description" key={index}>
+            <i className="ri-checkbox-fill about__details-icon" />
+            {caracteristica.nombre}
+          </p>
+        ))}
+      </>
+    )}
+
+    {/* Cuidados */}
+    {plantaData.cuidados && plantaData.cuidados.length > 0 && (
+      <>
+        <h3>Cuidados</h3>
+        {plantaData.cuidados.map((cuidado: { nombre: string }, index: number) => (
+          <p className="about__details-description" key={index}>
+            <i className="ri-checkbox-fill about__details-icon" />
+            {cuidado.nombre}
+          </p>
+        ))}
+      </>
+    )}
+
+    {/* Usos */}
+    {plantaData.usos && plantaData.usos.length > 0 && (
+      <>
+        <h3>Usos</h3>
+        {plantaData.usos.map((uso: { nombre: string }, index: number) => (
+          <p className="about__details-description" key={index}>
+            <i className="ri-checkbox-fill about__details-icon" />
+            {uso.nombre}
+          </p>
+        ))}
+      </>
+    )}
+
+    {/* Cantidad */}
+    {plantaData.cantidad && plantaData.cantidad > 0 && (
+      <>
+        <h3>Cantidad</h3>
+        <p className="about__details-description">
+          <i className="ri-leaf-fill about__details-icon" />
+          {plantaData.cantidad} planta(s) disponibles
+        </p>
+      </>
+     
+    )}
+
+    {/* Mensaje si no hay detalles disponibles */}
+    {(!plantaData.caracteristicas || plantaData.caracteristicas.length === 0) &&
+     (!plantaData.cuidados || plantaData.cuidados.length === 0) &&
+     (!plantaData.usos || plantaData.usos.length === 0) &&
+     (!plantaData.cantidad || plantaData.cantidad === 0) && (
+      <p className="about__details-description">No hay detalles disponibles para esta planta.</p>
+    )}
+  </div>
+</section>
+
+      
 
       {/*==================== IMÁGENES ====================*/}
       <section className="images section container" id="images">
