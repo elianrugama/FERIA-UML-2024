@@ -30,16 +30,17 @@ export default function Header({ theme, setTheme }: HeaderProps) {
     <>
       <header className="header" id="header">
         <nav className="nav container">
-           {/*
+         
           <Link className="nav__logo" to="/">
             <img src="/src/assets/img/Logotipo horizonta/Logotipo horizontal/Original PNG.png" alt="Logo"
               style={{ maxWidth: '100px' }}
             />
           </Link>
-         */}
+          {/*
           <Link className="nav__logo" to="/">
             <i className="ri-leaf-line nav__logo-icon" /> ECOUML
           </Link>
+           */}
           
 
           <div className={`nav__menu ${showMenu}`} id="nav-menu">

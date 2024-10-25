@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PlantasList from '../components/PlantasList';
-import { collection,getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../db/config';
+
 
 function Home() {
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // Controla qué pregunta está abierta
@@ -78,20 +79,23 @@ function Home() {
                         <img src="/src/assets/img/home5.png" alt="" className="home__img" />
                         <div className="home__data">
                             <h1 className="home__title">
-                                Catalogo de Plantas UML Ocotal
+                                <Link className="nav__logo" to="/">
+                                    <i className="ri-leaf-line" /> ECOUML
+                                </Link>
                             </h1>
                             <p className="home__description">
-                                En la Universidad Martín Lutero, ofrecemos una educación integral basada en la innovación, el compromiso social y el desarrollo personal.
-                                {/* total de plantas con una buena descripción y una variable contador */}
+                                Bienvenido al Catálogo de Plantas de la Universidad Martín Lutero. 
+                                Exploramos y cultivamos una amplia variedad de plantas que embellecen nuestras áreas verdes y enriquecen nuestro ambiente de aprendizaje.
                             </p>
                             <p className="home__description">
-                            Actualmente, contamos con <strong>{plantCount}</strong> plantas en nuestro catálogo y un total de <strong>{totalPlantas}</strong> plantas en nuestras areas verdes.
+                                Actualmente, nuestro catálogo cuenta con <strong>{plantCount}</strong> especies y un total de <strong>{totalPlantas}</strong> plantas distribuidas en nuestros jardines.
                             </p>
 
                             <a href="#about" className="button button--flex">
                                 Explorar <i className="ri-arrow-right-down-line button__icon"></i>
                             </a>
                         </div>
+
 
                         <div className="home__social">
                             <span className="home__social-follow">Síguenos</span>
